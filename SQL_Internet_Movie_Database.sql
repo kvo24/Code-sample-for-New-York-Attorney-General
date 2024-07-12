@@ -1,3 +1,13 @@
+-- This code performs a variety of SQL queries on the Internet Movie Database:
+--
+-- Part 1 examines the career of the most prolific director, Dick Carson,
+-- Part 2 explores the most profitable and highest grossing movies,
+-- and Parts 3 and 4 explore both cast size and movie production companies. 
+--
+
+
+-- PART 1 --
+
 -- 1a)
 with who_directed_most_movies as (
       select top 1 person_id as director, count(distinct movie_id) as movie_count
@@ -37,7 +47,6 @@ order by a.number_of_collaborations desc;
 -- Kelly, M.G. 
 -- Stafford, Susan
 
-
 -- 1c)
 with dick_carson_career as (
       select count(*) as number_of_movies_directed, to_number(t.production_year) as year
@@ -50,6 +59,8 @@ order by c.number_of_movies_directed desc;
 -- 1984
 
 
+-- PART 2 --
+
 -- 2a)
 create or replace view budget_table as
 with unmaxed_budget as (
@@ -61,7 +72,6 @@ select movie_id, max(budget) as movie_budget
 from unmaxed_budget
 group by movie_id;
 
-
 -- 2b)
 create or replace view gross_table as
 with unmaxed_gross as (
@@ -72,7 +82,6 @@ with unmaxed_gross as (
 select movie_id, max(gross) as movie_gross_revenue
 from unmaxed_gross
 group by movie_id;
-
 
 -- 2c)
 with movie_profits as (
@@ -96,6 +105,8 @@ from movie_profits;
 -- Jurassic Park
 
 
+-- PART 3 --
+
 -- 3a)
 with directors as (
       select person_id, movie_id
@@ -112,7 +123,6 @@ from directors d, actrixes a
 where d.person_id = a.person_id and d.movie_id = a.movie_id;
 -- 139180
 
-
 -- 3b)
 with cast_size as (
       select movie_id, count(*) as number_of_actrixes
@@ -125,7 +135,9 @@ from cast_size;
 -- 9.849613
 
 
--- 5a) Histogram of cast size
+-- PART 4 --
+
+-- 4a) Histogram of cast size
 -- This lists every movie and its cast size:
 create view cast_size as (
       select movie_id, count(*) as number_of_actrixes
@@ -141,8 +153,7 @@ create view hist_cast_size_1 as (
       order by number_of_actrixes desc
 );
 
-
--- 5b)
+-- 4b)
 select * from COMPANY_TYPE;
 -- +----+---------------------------+                                              
 -- | ID | KIND                      |
